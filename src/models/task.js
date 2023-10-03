@@ -14,7 +14,10 @@ const Task = sequelize.define('task', {
   },
   status: {
     type: DataTypes.STRING,
-    defaultValue: 'open'
+    defaultValue: 'open',
+    validate: {
+      isIn: [['open', 'in-progress', 'completed']]
+    }
   }
 });
 

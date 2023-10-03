@@ -22,6 +22,7 @@ async function createTask(data) {
 }
 
 async function getTasks(filter) {
+  console.log(filter);
   try {
     const tasks = await taskRepository.getAll(filter);
     return tasks;

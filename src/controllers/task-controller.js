@@ -13,17 +13,38 @@ const getMonthPadded = (month) => {
   return month.length === 1 ? '0' + month : month;
 }
 
+/**
+ * GET : /tasks
+ * req-body {}
+ * query parameters : year, month
+ * Ex: /tasks?year=2023&month=10  /tasks?year=2022
+ */
 const getTasks = async (req, res, next) => {
   try {
     const { year, month } = req.query;
 
+    let responseDate;
     const filter = {};
-    if (month && year) {
+    if (year && month) {
       const monthPadded = getMonthPadded(month);
-      filter.createdAt = {
-        [Op.gt]: moment(new Date(`${year}-${monthPadded}-1 00:00:00`), 'MM/DD/YYYY hh:mm:ss').utc(),
-        [Op.lt]: moment(new Date(`${year}-${Number(monthPadded) + 1}-1 00:00:00`), 'MM/DD/YYYY hh:mm:ss').utc()
+      if (month < 12) {
+        filter.createdAt = {
+          [Op.gte]: moment(new Date(`${year}-${monthPadded}-1 00:00:00`), 'MM/DD/YYYY hh:mm:ss').utc(),
+          [Op.lt]: moment(new Date(`${year}-${Number(monthPadded) + 1}-1 00:00:00`), 'MM/DD/YYYY hh:mm:ss').utc()
+        }
+      } else {
+        filter.createdAt = {
+          [Op.gte]: moment(new Date(`${year}-${monthPadded}-1 00:00:00`), 'MM/DD/YYYY hh:mm:ss').utc(),
+          [Op.lt]: moment(new Date(`${Number(year) + 1}-${1}-1 00:00:00`), 'MM/DD/YYYY hh:mm:ss').utc()
+        }
       }
+      responseDate = `${monthsArr[Number(month) - 1]} ${year}`
+    } else if (year) {
+      filter.createdAt = {
+        [Op.gte]: moment(new Date(`${year}-1-1 00:00:00`), 'MM/DD/YYYY hh:mm:ss').utc(),
+        [Op.lt]: moment(new Date(`${Number(year) + 1}-1-1 00:00:00`), 'MM/DD/YYYY hh:mm:ss').utc()
+      }
+      responseDate = `${year}`
     }
 
     const tasks = await TaskService.getTasks(filter);
@@ -39,7 +60,7 @@ const getTasks = async (req, res, next) => {
       }
     });
     const response = {
-      date: `${monthsArr[Number(month) - 1]} ${year}`,
+      date: responseDate,
       metrics: {
         open_tasks,
         inprogress_tasks,
@@ -51,6 +72,7 @@ const getTasks = async (req, res, next) => {
       .status(StatusCodes.OK)
       .json(SuccessResponse);
   } catch (error) {
+    console.log(error)
     ErrorResponse.error = error;
     return res
       .status(error.statusCode)
@@ -58,6 +80,11 @@ const getTasks = async (req, res, next) => {
   }
 }
 
+
+/**
+ * POST : /tasks 
+ * req-body {description: 'Attend meeting', status: 'open'}
+ */
 const createTask = async (req, res, next) => {
   try {
     const { description, status, createdAt } = req.body;
@@ -78,13 +105,19 @@ const createTask = async (req, res, next) => {
   }
 }
 
+
+/**
+ * PATCH : /airplanes
+ * req-body {description: 'new description', status: 'new status'}
+ */
 const patchTask = async (req, res, next) => {
   try {
-    const { id, description, status } = req.body;
+    const { id, description, status, createdAt } = req.body;
 
     const updatedTask = {};
     if (description) updatedTask.description = description;
     if (status) updatedTask.status = status;
+    if (createdAt) updatedTask.createdAt = createdAt;
     const response = await TaskService.updateTask(id, updatedTask);
     SuccessResponse.data = response;
     return res

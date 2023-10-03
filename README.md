@@ -29,19 +29,24 @@ Lets take a look inside the `src` folder
  - In the root directory create a `.env` file and add the following env variables
     ```
         PORT=<port number of your choice>
+        DB_PASSWORD=<enter the db password here>
+        DB_NAME=<name of your mysql db>
+        DB_USERNAME=<db username>
+        DB_HOST=<db host>
     ```
     ex: 
     ```
         PORT=3000
+        DB_PASSWORD=password
+        DB_NAME=task-manager-db
+        DB_USERNAME=root
+        DB_HOST=localhost
     ```
- - By executing the above command you will get migrations and seeders folder along with a config.json inside the config folder. 
- - If you're setting up your development environment, then write the username of your db, password of your db and in dialect mention whatever db you are using for ex: mysql, mariadb etc
- - If you're setting up test or prod environment, make sure you also replace the host with the hosted db url.
+ - You need to have mysql and mysql workbench installed to get all the required db details like the host, username, password and the name of the db. Use 'localhost' for DB_HOST for a local installation of mysql.
 
  - To run the server execute
  ```
  npm run dev
-
  ```
 
 
@@ -50,9 +55,13 @@ Lets take a look inside the `src` folder
 Use an API testing software like Postman
 - To get all the tasks, make a get request to ```/api/v1/tasks```
 
-- To get metrics for a particular month of a year, make a get request to ```api/v1/tasks?year=2023&month=2```
+- To get metrics for a particular month of a year, make a get request to ```api/v1/tasks?year=2023&month=10```
 
   Pass the 4 digit year and 1 or 2 digit month as query string
+
+- To get metrics for a particular year, make a get request to ```api/v1/tasks?year=2023```
+
+  Pass the 4 digit year as query string
   
 - To create a task, make a post request to ```/api/v1/taks```
   

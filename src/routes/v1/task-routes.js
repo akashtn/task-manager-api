@@ -5,8 +5,9 @@ const { TaskController } = require('../../controllers');
 
 const router = express.Router();
 
+// route : /api/v1/tasks
 router
-  .get('/', TaskController.getTasks)
+  .get('/', TaskMiddlewares.validateGetRequest, TaskController.getTasks)
   .post('/', TaskMiddlewares.validateCreateRequest, TaskController.createTask)
   .patch('/', TaskMiddlewares.validatePatchRequest, TaskController.patchTask);
 
