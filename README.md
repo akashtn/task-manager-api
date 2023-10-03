@@ -56,15 +56,15 @@ Lets take a look inside the `src` folder
 Use an API testing software like Postman
 - To get all the tasks, make a get request to ```/api/v1/tasks```
 
-- To get metrics for a particular month of a year, make a `get` request to ```api/v1/tasks?year=2023&month=10```
+- To get metrics for a particular month of a year, make a `get` request to ```/api/v1/tasks?year=2023&month=10```
 
   Pass the 4 digit year and 1 or 2 digit month as query string
 
-- To get metrics for a particular year, make a `get` request to ```api/v1/tasks?year=2023```
+- To get metrics for a particular year, make a `get` request to ```/api/v1/tasks?year=2023```
 
   Pass the 4 digit year as query string
   
-- To create a task, make a `post` request to ```/api/v1/taks```
+- To create a task, make a `post` request to ```/api/v1/tasks```
   
   Set the body to JSON and pass a JSON object with description (compulsory) and status(optional, set to "open" by default)
 
